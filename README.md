@@ -70,7 +70,6 @@ npm run preview
   - `feat/<feature-name>` — 新機能や大きな変更を行うためのブランチ。`main` から分岐し、作業が完了したら PR を作成します。
   - ブランチ名は `feat/<機能名>` の形式で、機能の内容がわかるようにします。
 
-
 ```bash
 # main ブランチに切り替え
 git switch main
@@ -89,4 +88,3 @@ git push origin feat/my-feature
 # GitHub で PR を作成
 # discordでレビュー依頼
 ```
-
