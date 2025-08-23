@@ -1,0 +1,27 @@
+/*
+  ここに色やサイズなどのCSS変数を書く
+  他のところで使うときは var(--変数名) で呼び出す
+  例: color: var(--color-primary);
+*/
+:root {
+	--font-size-small: 0.875rem;
+	--font-size-medium: 1rem;
+	--font-size-large: 1.25rem;
+	--color-primary: #ff6f61;
+	--color-secondary: #4a90e2;
+	--color-background: #f5f5f5;
+	--color-text: #333333;
+	--spacing-small: 0.5rem;
+	--spacing-medium: 1rem;
+	--spacing-large: 1.5rem;
+	--border-radius: 0.25rem;
+}
+
+/* アプリ全体に適用したいスタイル（一旦適当に書いてるだけ） */
+body {
+	font-family: serif;
+	background-color: var(--color-background);
+	color: var(--color-text);
+	margin: 0;
+	padding: var(--spacing-medium);
+}
