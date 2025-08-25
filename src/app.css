@@ -25,12 +25,11 @@
 body {
 	margin: 0;
 	padding: 0;
-	background: #f0f0f5; /* Fallback color */
+	background-color: #f0f0f5; /* Fallback color */
 	background: linear-gradient(135deg, #f0f0f5 0%, #d4c8e8 100%);
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	min-height: 100vh;
 	position: relative;
-	overflow: hidden;
 }
