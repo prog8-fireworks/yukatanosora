@@ -158,10 +158,10 @@
 			position: static;
 			margin-top: 20px;
 			width: 80%;
-			.wrapper {
-				flex-direction: column;
-				gap: 40px;
-			}
+		}
+		.wrapper {
+			flex-direction: column;
+			gap: 40px;
 		}
 	}
 </style>
