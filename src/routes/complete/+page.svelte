@@ -68,7 +68,10 @@
 	}
 	.wrapper {
 		display: flex;
+		align-items: center;
+		justify-content: center;
 		gap: 100px;
+		width: 100%;
 	}
 	h1 {
 		font-size: 35px;
@@ -155,6 +158,10 @@
 			position: static;
 			margin-top: 20px;
 			width: 80%;
+			.wrapper {
+				flex-direction: column;
+				gap: 40px;
+			}
 		}
 	}
 </style>
