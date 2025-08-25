@@ -1,38 +1,19 @@
 <!-- HTMLの中身だけ書く -->
-<html lang="ja">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>浴衣の空</title>
-		<link rel="stylesheet" href="style.css" />
-	</head>
-	<body>
-		<div class="header">
-			<div class="logo">浴衣の空</div>
-		</div>
+<div class="header">
+	<div class="logo">浴衣の空</div>
+</div>
 
-		<div class="container">
-			<div class="left-box"></div>
-			<div class="right-box">
-				<div class="inner-right-box"></div>
-			</div>
-		</div>
-	</body>
-</html>
+<div class="container">
+	<div class="left-box"></div>
+	<div class="right-box">
+		<div class="inner-right-box"></div>
+	</div>
+</div>
 
 <a href="/complete"> 完成ページ </a>
 
 <!-- スタイル(CSS) -->
 <style>
-	body {
-		background-color: #e6e6fa; /* 淡い紫色の背景 */
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		min-height: 100vh;
-		margin: 0;
-	}
-
 	.container {
 		display: flex;
 		gap: 20px;
