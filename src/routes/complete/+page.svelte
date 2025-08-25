@@ -5,7 +5,6 @@
 	</div>
 
 	<div class="main-content">
-		img src=""
 		<h1>素敵な浴衣が完成しました！</h1>
 		<div class="wrapper">
 			<!-- ここが完成画像 -->
