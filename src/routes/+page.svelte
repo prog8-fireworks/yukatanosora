@@ -1,7 +1,7 @@
 <!-- HTMLの中身だけ書く -->
 <h1 class="title">これがトップページ "/"でアクセスする</h1>
 <p>ゆかた編集エディタがこのページかな</p>
-<a href="/complete">完成ページ</a>
+<a href="/complete"> 完成ページ </a>
 
 <!-- スタイル(CSS) -->
 <style>
