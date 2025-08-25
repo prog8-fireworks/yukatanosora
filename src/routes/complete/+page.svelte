@@ -44,15 +44,14 @@
 	}
 
 	.header {
-		width: 100%;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 30px;
 		position: absolute;
-		top: 20px;
-		left: 20px;
-		right: 20px;
+		top: 0px;
+		left: 0px;
+		right: 0px;
+		padding: 20px;
 	}
 
 	.logo {
