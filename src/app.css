@@ -18,10 +18,19 @@
 }
 
 /* アプリ全体に適用したいスタイル（一旦適当に書いてるだけ） */
-body {
+* {
 	font-family: serif;
-	background-color: var(--color-background);
-	color: var(--color-text);
+}
+
+body {
 	margin: 0;
-	padding: var(--spacing-medium);
+	padding: 0;
+	background: #f0f0f5; /* Fallback color */
+	background: linear-gradient(135deg, #f0f0f5 0%, #d4c8e8 100%);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	position: relative;
+	overflow: hidden;
 }
