@@ -1,4 +1,12 @@
 <!-- HTMLの中身だけ書く -->
+<script>
+	import { goto } from '$app/navigation';
+
+	function handleNewCreate() {
+		goto('/');
+	}
+</script>
+
 <div class="container">
 	<div class="header">
 		<div class="logo">浴衣の空</div>
@@ -28,7 +36,7 @@
 		</div>
 	</div>
 
-	<button class="btn new-create-btn">新しく作成→</button>
+	<button class="btn new-create-btn" on:click={handleNewCreate}>新しく作成→</button>
 </div>
 
 <!-- スタイル(CSS) -->
@@ -144,12 +152,13 @@
 
 	.new-create-btn {
 		background: #e6e6fa;
-		color: #888;
+		color: #353333;
 		position: absolute;
 		bottom: 50px;
 		right: 50px;
 		width: auto;
 		padding: 15px 30px;
+		z-index: 1000; /* mi--:ブラウザを小さく開いてる時にクリックできなかったので、これを追加しました */
 	}
 
 	/* For smaller screens */
@@ -158,6 +167,7 @@
 			position: static;
 			margin-top: 20px;
 			width: 80%;
+			z-index: 1000; /* ←mi--追加 */
 		}
 		.wrapper {
 			flex-direction: column;
