@@ -71,10 +71,10 @@
 		gap: 100px;
 	}
 	h1 {
-		font-size: 28px;
-		font-weight: 500;
-		color: #4a4a4a;
-		margin-bottom: 40px;
+		font-size: 35px;
+		font-weight: 700;
+		color: #4b3774;
+		margin-bottom: 35px;
 	}
 
 	.preview-container {
