@@ -30,28 +30,34 @@
 			<div class="tab-content">
 				{#if currentTab === 'gara'}
 					<h2>柄を選ぶところ</h2>
-					<ItemCard title="花" />
-					<ItemCard title="蝶" />
-					<ItemCard title="波" />
-					<ItemCard title="星" />
-					<ItemCard title="葉" />
-					<ItemCard title="幾何学" />
+					<div class="item-grid">
+						<ItemCard title="花" />
+						<ItemCard title="蝶" />
+						<ItemCard title="波" />
+						<ItemCard title="星" />
+						<ItemCard title="葉" />
+						<ItemCard title="幾何学" />
+					</div>
 				{:else if currentTab === 'obi'}
 					<h2>帯を選ぶところ</h2>
-					<ItemCard title="花" />
-					<ItemCard title="蝶" />
-					<ItemCard title="波" />
-					<ItemCard title="星" />
-					<ItemCard title="葉" />
-					<ItemCard title="幾何学" />
+					<div class="item-grid">
+						<ItemCard title="花" />
+						<ItemCard title="蝶" />
+						<ItemCard title="波" />
+						<ItemCard title="星" />
+						<ItemCard title="葉" />
+						<ItemCard title="幾何学" />
+					</div>
 				{:else if currentTab === 'item'}
 					<h2>小物を選ぶところ</h2>
-					<ItemCard title="花" />
-					<ItemCard title="蝶" />
-					<ItemCard title="波" />
-					<ItemCard title="星" />
-					<ItemCard title="葉" />
-					<ItemCard title="幾何学" />
+					<div class="item-grid">
+						<ItemCard title="花" />
+						<ItemCard title="蝶" />
+						<ItemCard title="波" />
+						<ItemCard title="星" />
+						<ItemCard title="葉" />
+						<ItemCard title="幾何学" />
+					</div>
 				{/if}
 			</div>
 		</div>
@@ -64,6 +70,9 @@
 
 <!-- スタイル(CSS) -->
 <style>
+	h2 {
+		margin: 0;
+	}
 	.main {
 		width: 100%;
 	}
@@ -110,18 +119,22 @@
 		background-color: #e1a9be;
 		font-weight: bold;
 	}
+
 	.tab-content {
 		padding: 20px;
+	}
+
+	.item-grid {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		gap: 20px;
 		color: #555;
+		margin-top: 12px;
 	}
 
 	.left-box {
 		background-color: #ffffff; /* 白い四角 */
 		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-		padding: 20px;
 		box-sizing: border-box;
 		width: 50%; /* 左右の幅を調整 */
 	}
