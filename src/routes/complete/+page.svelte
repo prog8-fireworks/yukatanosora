@@ -1,3 +1,33 @@
+<script>
+function imagedownload(myCanvasId,imageurl){
+	const canvas = document.getElementById(myCanvasId);
+	if(!canvas){
+		return;
+	}
+
+	const ctx = canvas.getContext('2d');
+	if(!ctx){
+			return;
+		}
+	const img = new Image();
+
+	img.onload = function() {
+		const cw = canvas.width, ch = canvas.height;
+		const scale = Math.min(cw / img.naturalWidth, ch / img.naturalHeight);
+		const w = img.naturalWidth * scale;
+		const h = img.naturalHeight * scale;
+		const x = (cw - w) / 2;
+		const y = (ch - h) / 2;
+
+		ctx.clearRect(0, 0, cw, ch);
+		// imgをcanvasに描画
+		ctx.drawImage(img, x, y, w, h);
+	};
+
+	img.src = imageurl; // 画像のURLを指定
+}
+
+</script>
 <!-- HTMLの中身だけ書く -->
 <div class="container">
 	<div class="header">
