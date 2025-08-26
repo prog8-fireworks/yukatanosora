@@ -1,12 +1,4 @@
 <!-- HTMLの中身だけ書く -->
-<script>
-	import { goto } from '$app/navigation';
-
-	function handleNewCreate() {
-		goto('/');
-	}
-</script>
-
 <div class="container">
 	<div class="header">
 		<div class="logo">浴衣の空</div>
@@ -36,7 +28,7 @@
 		</div>
 	</div>
 
-	<button class="btn new-create-btn" on:click={handleNewCreate}>新しく作成→</button>
+	<a href="/" class="btn new-create-btn">新しく作成→</a>
 </div>
 
 <!-- スタイル(CSS) -->
