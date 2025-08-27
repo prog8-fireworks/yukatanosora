@@ -31,10 +31,10 @@
 	<a href="/" class="btn new-create-btn">新しく作成→</a>
 
 	<!-- 左下の桜 -->
-	<img src="sakura/sakura-hidari.png" alt="桜の木" class="sakura sakura-left" />
+	<img src="/sakura/sakura-hidari.png" alt="" aria-hidden="true" class="sakura sakura-left" />
 
 	<!-- 右上の桜 -->
-	<img src="/sakura/sakura-migiue.png" alt="桜の木" class="sakura sakura-right" />
+	<img src="/sakura/sakura-migiue.png" alt="" aria-hidden="true" class="sakura sakura-right" />
 </div>
 
 <!-- スタイル(CSS) -->
@@ -161,11 +161,12 @@
 
 	.sakura {
 		position: fixed; /* 画面上の固定位置に配置 */
-		bottom: 0; /* 下端に配置 */
-		width: 40vw; /* 画面幅の15% */
+		/* bottom は個別クラスで指定（右上は top 固定にするため） */
+		width: 40vw; /* 画面幅の40% */
 		min-width: 300px; /* 最小幅を設定 */
 		height: auto;
 		z-index: 0; /* 他のボタンや画像の背面に表示 */
+		pointer-events: none; /* 背面のUIをクリック可能に */
 	}
 
 	.sakura-left {
@@ -192,6 +193,7 @@
 		}
 		.sakura {
 			width: 80px;
+			min-width: 0; /* 上書きしてちゃんと小さくなるように */
 		}
 	}
 </style>
