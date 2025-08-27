@@ -1,9 +1,13 @@
 <script lang="ts">
 	// ここにJavaScript/TypeScriptのコードを書く
-	export let title: string = 'タイトル';
+	let {
+		title = 'タイトル',
+		onclick,
+		active
+	}: { title?: string; onclick?: () => void; active?: boolean } = $props();
 </script>
 
-<button class="content">
+<button class="content {active ? 'active' : ''}" {onclick}>
 	<div class="icon"></div>
 	<h3>{title}</h3>
 </button>
@@ -27,5 +31,9 @@
 	h3 {
 		margin: 0;
 		padding-top: 8px;
+	}
+
+	.content.active {
+		border: 3px solid #ff6b9d;
 	}
 </style>

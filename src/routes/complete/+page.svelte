@@ -1,3 +1,11 @@
+<script>
+	function downloadImage() {
+		const canvas = document.querySelector('canvas');
+		if (!canvas) return;
+		const ctx = canvas.getContext('2d');
+	}
+</script>
+
 <!-- HTMLの中身だけ書く -->
 <div class="container">
 	<div class="header">
