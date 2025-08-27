@@ -37,6 +37,12 @@
 	</div>
 
 	<a href="/" class="btn new-create-btn">新しく作成→</a>
+
+	<!-- 左下の桜 -->
+	<img src="/sakura/sakura-hidari.png" alt="" aria-hidden="true" class="sakura sakura-left" />
+
+	<!-- 右上の桜 -->
+	<img src="/sakura/sakura-migiue.png" alt="" aria-hidden="true" class="sakura sakura-right" />
 </div>
 
 <!-- スタイル(CSS) -->
@@ -152,12 +158,32 @@
 	.new-create-btn {
 		background: #e6e6fa;
 		color: #353333;
-		position: absolute;
+		position: fixed;
 		bottom: 50px;
 		right: 50px;
 		width: auto;
 		padding: 15px 30px;
 		z-index: 1000; /* mi--:ブラウザを小さく開いてる時にクリックできなかったので、これを追加しました */
+	}
+
+	.sakura {
+		position: fixed; /* 画面上の固定位置に配置 */
+		/* bottom は個別クラスで指定（右上は top 固定にするため） */
+		width: 40vw; /* 画面幅の40% */
+		min-width: 300px; /* 最小幅を設定 */
+		height: auto;
+		z-index: 0; /* 他のボタンや画像の背面に表示 */
+		pointer-events: none; /* 背面のUIをクリック可能に */
+	}
+
+	.sakura-left {
+		bottom: 0; /* 下端に配置 */
+		left: 0; /* 左端に配置 */
+	}
+
+	.sakura-right {
+		top: 0; /* 上端に配置 */
+		right: 0; /* 右端に配置 */
 	}
 
 	/* For smaller screens */
@@ -171,6 +197,10 @@
 		.wrapper {
 			flex-direction: column;
 			gap: 40px;
+		}
+		.sakura {
+			width: 80px;
+			min-width: 0; /* 上書きしてちゃんと小さくなるように */
 		}
 	}
 </style>
