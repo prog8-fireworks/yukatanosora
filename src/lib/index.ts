@@ -1,6 +1,10 @@
 // Store
 export * from './stores/yukataStore.js';
 
+// Utils
+export * from './utils/imageUtils.js';
+export * from './utils/ogpManager.js';
+
 // Canvas描画の核心部分
 export const drawYukata = (
 	canvas: HTMLCanvasElement,
