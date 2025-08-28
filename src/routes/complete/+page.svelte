@@ -200,13 +200,13 @@
 	.container {
 		display: flex;
 		flex-direction: column;
-		flex-direction: column;
 		align-items: center;
 		min-height: 100vh; /* 画面高さに合わせる */
 		justify-content: center;
 		padding: 20px; /* 左右に余白 */
 		box-sizing: border-box;
 		text-align: center;
+		width: 100%;
 	}
 
 	.header {
@@ -259,6 +259,7 @@
 		border-radius: 15px;
 		position: relative;
 		padding: 0 40px;
+		display: grid;
 	}
 
 	.yukata-canvas {
@@ -322,6 +323,19 @@
 	}
 
 	/* 小物のスタイル */
+	.geta,
+	.higasa,
+	.kinchaku,
+	.obidome {
+		position: absolute;
+		z-index: 2;
+		width: auto;
+		height: auto;
+		max-width: 25%; /* 親幅の25%まで */
+		max-height: 25%; /* 親高さの25%まで */
+	}
+
+	/* 位置は元のまま */
 	.geta {
 		position: absolute;
 		bottom: 20px;
@@ -330,16 +344,16 @@
 		width: 120px;
 		height: auto;
 	}
-
 	.higasa {
 		position: absolute;
-		top: 0px;
-		left: 30px;
-		width: 280px;
+		top: 8%;
+		left: 13%;
+		width: 300px; /* 元の280pxから大きく */
 		height: auto;
 		z-index: 10;
+		max-width: 40%; /* 親ボックス幅の割合で最大サイズを設定 */
+		max-height: 50%; /* 必要に応じて */
 	}
-
 	.kinchaku {
 		position: absolute;
 		top: 45%;
@@ -348,7 +362,6 @@
 		height: auto;
 		z-index: 10;
 	}
-
 	.obidome {
 		position: absolute;
 		top: 42%;
