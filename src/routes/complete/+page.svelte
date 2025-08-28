@@ -1,10 +1,21 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { drawYukata, yukataActions, yukataDesignStore, type YukataDesign } from '$lib';
+	import {
+		compositeYukataImage,
+		downloadCanvasAsImage,
+		drawYukata,
+		generateOgpImage,
+		loadYukataImage,
+		shareToSocial,
+		yukataActions,
+		yukataDesignStore,
+		type YukataDesign
+	} from '$lib';
 	import { onMount } from 'svelte';
 
 	let yukataImage = $state<HTMLImageElement | null>(null);
 	let canvasRef: HTMLCanvasElement;
+	let ogpImageUrl = $state<string>('');
 
 	// === Svelte 5でstoreを使う ===
 	let designState = $state<YukataDesign>();
@@ -22,26 +33,6 @@
 		}
 	});
 
-	// === 画像読み込み関数 ===
-	const loadYukataImage = (imagePath: string): Promise<HTMLImageElement> => {
-		return new Promise((resolve, reject) => {
-			const img = new Image();
-			img.crossOrigin = 'anonymous';
-
-			img.onload = (): void => {
-				yukataImage = img;
-				resolve(img);
-			};
-
-			img.onerror = (): void => {
-				console.error('浴衣画像の読み込みに失敗しました:', imagePath);
-				reject(new Error(`画像読み込み失敗: ${imagePath}`));
-			};
-
-			img.src = imagePath;
-		});
-	};
-
 	// === リアクティブ描画 ===
 	$effect(() => {
 		if (canvasRef && yukataImage && designState) {
@@ -52,91 +43,43 @@
 				designState.selectedColor,
 				designState.obiColor
 			);
+
+			// 描画完了後にOGP画像を生成
+			setTimeout(() => {
+				ogpImageUrl = generateOgpImage(canvasRef);
+			}, 200);
 		}
 	});
 
-	// === SNS共有機能 ===
-	const shareToSocial = () => {
-		if (!designState) return;
-
-		const shareUrl = yukataActions.generateShareUrl(designState, window.location.origin);
-		const shareText = '素敵な浴衣が完成しました！ #浴衣の空';
-
-		// クリップボードにコピー
-		navigator.clipboard
-			.writeText(shareUrl)
-			.then(() => {
-				alert('共有URLがクリップボードにコピーされました！');
-			})
-			.catch(() => {
-				// フォールバック: プロンプトで表示
-				prompt('この URLをコピーして共有してください:', shareUrl);
-			});
-
-		// SNS共有オプション（オプション）
-		if (navigator.share) {
-			navigator
-				.share({
-					title: '浴衣の空',
-					text: shareText,
-					url: shareUrl
-				})
-				.catch(console.log);
+	// === 小物の画像読み込み完了後にOGP画像を再生成 ===
+	$effect(() => {
+		if (designState?.selectedItems && designState.selectedItems.length > 0) {
+			setTimeout(() => {
+				ogpImageUrl = generateOgpImage(canvasRef);
+			}, 500);
 		}
-	};
+	});
 
 	// === 画像ダウンロード機能 ===
 	const downloadImage = async () => {
 		if (!canvasRef) return;
 
-		try {
-			// 新しいcanvasを作成して合成
-			const downloadCanvas = document.createElement('canvas');
-			const container = document.querySelector('.preview-image-wrapper') as HTMLElement;
-			if (!container) return;
-			const containerRect = container.getBoundingClientRect();
-			const canvasRect = canvasRef.getBoundingClientRect();
-			downloadCanvas.width = Math.round(containerRect.width);
-			downloadCanvas.height = Math.round(containerRect.height);
-			const downloadCtx = downloadCanvas.getContext('2d');
-			if (!downloadCtx) return;
-
-			// 浴衣のcanvasを描画
-			const offsetX = canvasRect.left - containerRect.left;
-			const offsetY = canvasRect.top - containerRect.top;
-			downloadCtx.drawImage(canvasRef, offsetX, offsetY, canvasRect.width, canvasRect.height);
-
-			// 小物を合成
-			const komono = document.querySelectorAll('.preview-image-wrapper img');
-			for (const img of komono) {
-				const htmlImg = img as HTMLImageElement;
-				if (htmlImg.complete) {
-					const rect = htmlImg.getBoundingClientRect();
-					const containerRect = document
-						.querySelector('.preview-image-wrapper')
-						?.getBoundingClientRect();
-					if (containerRect) {
-						const x = rect.left - containerRect.left;
-						const y = rect.top - containerRect.top;
-						downloadCtx.drawImage(htmlImg, x, y, rect.width, rect.height);
-					}
-				}
-			}
-
-			// ダウンロード
-			const link = document.createElement('a');
-			link.download = 'my-yukata.png';
-			link.href = downloadCanvas.toDataURL();
-			link.click();
-		} catch (error) {
-			console.error('ダウンロードに失敗しました:', error);
+		const compositeCanvas = compositeYukataImage(canvasRef);
+		if (compositeCanvas) {
+			downloadCanvasAsImage(compositeCanvas);
 		}
 	};
 
 	// === 初期化 ===
 	onMount(async () => {
 		try {
-			await loadYukataImage('/yukata.png');
+			const img = await loadYukataImage('/yukata.png');
+			yukataImage = img;
+
+			// 初期化完了後にOGP画像を生成
+			setTimeout(() => {
+				ogpImageUrl = generateOgpImage(canvasRef);
+			}, 1000);
 		} catch (error) {
 			console.error('初期画像の読み込みに失敗:', error);
 		}
@@ -144,6 +87,30 @@
 </script>
 
 <!-- HTMLの中身だけ書く -->
+<svelte:head>
+	<!-- OGP meta tags -->
+	<meta property="og:title" content="素敵な浴衣が完成しました！ - 浴衣の空" />
+	<meta
+		property="og:description"
+		content="カスタマイズした浴衣のデザインが完成しました。あなただけの特別な浴衣をお楽しみください。"
+	/>
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:image" content={ogpImageUrl || '/yukata.png'} />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:site_name" content="浴衣の空" />
+
+	<!-- Twitter Card -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="素敵な浴衣が完成しました！ - 浴衣の空" />
+	<meta
+		name="twitter:description"
+		content="カスタマイズした浴衣のデザインが完成しました。あなただけの特別な浴衣をお楽しみください。"
+	/>
+	<meta name="twitter:image" content={ogpImageUrl || '/yukata.png'} />
+</svelte:head>
+
 <div class="container">
 	<div class="header">
 		<div class="logo">浴衣の空</div>
@@ -178,7 +145,10 @@
 					<i class="fas fa-download"></i>
 					<span>画像ダウンロード</span>
 				</button>
-				<button class="btn share-btn">
+				<button
+					class="btn share-btn"
+					onclick={() => shareToSocial(designState, window.location.origin)}
+				>
 					<i class="fas fa-share-alt"></i>
 					<span>SNS共有</span>
 				</button>
