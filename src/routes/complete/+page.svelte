@@ -74,34 +74,15 @@
 		}
 	});
 
-	// === SNS共有機能 ===
-	const shareToSocial = () => {
+	// === URLをコピー ===
+	const copyUrl = () => {
 		if (!designState) return;
 
-		const shareUrl = yukataActions.generateShareUrl(designState, window.location.origin);
-		const shareText = '素敵な浴衣が完成しました！ #浴衣の空';
+		const url = yukataActions.generateShareUrl(designState, window.location.origin);
 
 		// クリップボードにコピー
-		navigator.clipboard
-			.writeText(shareUrl)
-			.then(() => {
-				alert('共有URLがクリップボードにコピーされました！');
-			})
-			.catch(() => {
-				// フォールバック: プロンプトで表示
-				prompt('この URLをコピーして共有してください:', shareUrl);
-			});
-
-		// SNS共有オプション（オプション）
-		if (navigator.share) {
-			navigator
-				.share({
-					title: '浴衣の空',
-					text: shareText,
-					url: shareUrl
-				})
-				.catch(console.log);
-		}
+		navigator.clipboard.writeText(url);
+		alert('URLをコピーしました');
 	};
 
 	// === 画像ダウンロード機能 ===
@@ -206,14 +187,27 @@
 					<div class="modal" onclick={closeModal}>
 						<div class="modal-content" onclick={(e) => e.stopPropagation()}>
 							<button class="close" onclick={closeModal}>&times;</button>
-							<h3>Xでシェアする</h3>
-							<a
-								href={twitterShareUrl}
-								class="twitter-share-button"
-								data-show-count="false"
-								data-size="large">Tweet</a
-							>
-							<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+							<div>
+								<h3>Xでシェアする</h3>
+								<a
+									href={twitterShareUrl}
+									class="twitter-share-button"
+									data-show-count="false"
+									data-size="large">Tweet</a
+								>
+								<script
+									async
+									src="https://platform.twitter.com/widgets.js"
+									charset="utf-8"
+								></script>
+							</div>
+							<div>
+								<h3>URLをコピーする</h3>
+								<div class="copy-url-container">
+									<input type="text" class="copy-url-input" readonly value={window.location.href} />
+									<button class="copy-btn" onclick={copyUrl}>コピー</button>
+								</div>
+							</div>
 						</div>
 					</div>
 				{/if}
@@ -383,6 +377,27 @@
 		background: linear-gradient(90deg, #c965c6, #9b59b6);
 	}
 
+	.copy-url-container {
+		display: flex;
+		gap: 10px;
+	}
+
+	.copy-url-input {
+		width: 100%;
+		padding: 10px;
+		border: 1px solid #ccc;
+		border-radius: 8px;
+	}
+	.copy-btn {
+		border: none;
+		padding: 8px 16px;
+		border-radius: 8px;
+		background: #e6e6fa;
+		color: #353333;
+		flex-shrink: 0;
+		cursor: pointer;
+	}
+
 	.new-create-btn {
 		background: #e6e6fa;
 		color: #353333;
@@ -394,7 +409,6 @@
 		z-index: 1000; /* mi--:ブラウザを小さく開いてる時にクリックできなかったので、これを追加しました */
 	}
 
-	/* 小物のスタイル */
 	.geta,
 	.higasa,
 	.kinchaku,
@@ -443,57 +457,6 @@
 		height: auto;
 		z-index: 10;
 	}
-
-	/* 小物のスタイル */
-	.geta,
-	.higasa,
-	.kinchaku,
-	.obidome {
-		position: absolute;
-		z-index: 2;
-		width: auto;
-		height: auto;
-		max-width: 25%; /* 親幅の25%まで */
-		max-height: 25%; /* 親高さの25%まで */
-	}
-
-	/* 位置は元のまま */
-	.geta {
-		position: absolute;
-		bottom: 20px;
-		left: 50%;
-		transform: translateX(-50%);
-		width: 120px;
-		height: auto;
-	}
-	.higasa {
-		position: absolute;
-		top: 8%;
-		left: 13%;
-		width: 300px; /* 元の280pxから大きく */
-		height: auto;
-		z-index: 10;
-		max-width: 40%; /* 親ボックス幅の割合で最大サイズを設定 */
-		max-height: 50%; /* 必要に応じて */
-	}
-	.kinchaku {
-		position: absolute;
-		top: 45%;
-		right: 35px;
-		width: 140px;
-		height: auto;
-		z-index: 10;
-	}
-	.obidome {
-		position: absolute;
-		top: 42%;
-		left: 51%;
-		transform: translate(-50%, -50%);
-		width: 120px;
-		height: auto;
-		z-index: 10;
-	}
-
 	.sakura {
 		position: fixed; /* 画面上の固定位置に配置 */
 		/* bottom は個別クラスで指定（右上は top 固定にするため） */
