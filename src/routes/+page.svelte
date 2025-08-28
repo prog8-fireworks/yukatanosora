@@ -11,6 +11,7 @@
 	let selectedPattern = $state('solid');
 	let yukataImage = $state<HTMLImageElement | null>(null);
 	let canvasRef: HTMLCanvasElement;
+	let selectedItems = $state<string[]>([]); // 小物の選択状態を管理
 
 	// === パターンのオプション ===
 	interface PatternOption {
@@ -26,6 +27,13 @@
 		{ id: 'waves', name: '青海波' }
 	];
 
+	const items: PatternOption[] = [
+		{ id: 'geta', name: '下駄' },
+		{ id: 'higasa', name: '日傘' },
+		{ id: 'kinchaku', name: '巾着' },
+		{ id: 'obidome', name: '帯留め' }
+	];
+
 	// === 画像読み込み関数 ===
 	const loadYukataImage = (imagePath: string): Promise<HTMLImageElement> => {
 		return new Promise((resolve, reject) => {
@@ -34,7 +42,6 @@
 
 			img.onload = (): void => {
 				yukataImage = img;
-				console.log('浴衣画像読み込み完了');
 				resolve(img);
 			};
 
@@ -78,10 +85,6 @@
 					onclick={() => (currentTab = 'gara')}>柄</button
 				>
 				<button
-					class="tab {currentTab === 'obi' ? 'active' : ''}"
-					onclick={() => (currentTab = 'obi')}>帯</button
-				>
-				<button
 					class="tab {currentTab === 'item' ? 'active' : ''}"
 					onclick={() => (currentTab = 'item')}>小物</button
 				>
@@ -96,6 +99,12 @@
 						sliderDirection="horizontal"
 						label="生地の色を選ぶ"
 					/>
+					<ColorPicker
+						bind:hex={obiColor}
+						components={ChromeVariant}
+						sliderDirection="horizontal"
+						label="帯の色を選ぶ"
+					/>
 					<div class="item-grid">
 						{#each patterns as pattern (pattern.id)}
 							<ItemCard
@@ -105,30 +114,21 @@
 							/>
 						{/each}
 					</div>
-				{:else if currentTab === 'obi'}
-					<ColorPicker
-						bind:hex={obiColor}
-						components={ChromeVariant}
-						sliderDirection="horizontal"
-						label="帯の色を選ぶ"
-					/>
-					<div class="item-grid">
-						<ItemCard title="花" />
-						<ItemCard title="蝶" />
-						<ItemCard title="波" />
-						<ItemCard title="星" />
-						<ItemCard title="葉" />
-						<ItemCard title="幾何学" />
-					</div>
 				{:else if currentTab === 'item'}
-					<h2>小物を選ぶところ</h2>
 					<div class="item-grid">
-						<ItemCard title="花" />
-						<ItemCard title="蝶" />
-						<ItemCard title="波" />
-						<ItemCard title="星" />
-						<ItemCard title="葉" />
-						<ItemCard title="幾何学" />
+						{#each items as item (item.id)}
+							<ItemCard
+								title={item.name}
+								onclick={() => {
+									if (!selectedItems.includes(item.id)) {
+										selectedItems = [...selectedItems, item.id];
+									} else {
+										selectedItems = selectedItems.filter((i) => i !== item.id);
+									}
+								}}
+								active={selectedItems.includes(item.id)}
+							/>
+						{/each}
 					</div>
 				{/if}
 			</div>
@@ -136,10 +136,19 @@
 		<div class="right-box">
 			<div class="inner-right-box">
 				<canvas bind:this={canvasRef} width="400" height="700" class="image"></canvas>
-				<img src="/komono-design/geta.png" class="geta" alt="" />
-				<img src="/komono-design/higasa.png" class="higasa" alt="" />
-				<img src="/komono-design/kinchaku.png" class="kinchaku" alt="" />
-				<img src="/komono-design/obidome.png" class="obidome" alt="" />
+				<!-- 小物の画像を重ねる -->
+				{#if selectedItems.includes('geta')}
+					<img src="/komono-design/geta.png" class="geta" alt="" />
+				{/if}
+				{#if selectedItems.includes('higasa')}
+					<img src="/komono-design/higasa.png" class="higasa" alt="" />
+				{/if}
+				{#if selectedItems.includes('kinchaku')}
+					<img src="/komono-design/kinchaku.png" class="kinchaku" alt="" />
+				{/if}
+				{#if selectedItems.includes('obidome')}
+					<img src="/komono-design/obidome.png" class="obidome" alt="" />
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -148,9 +157,6 @@
 
 <!-- スタイル(CSS) -->
 <style>
-	h2 {
-		margin: 0;
-	}
 	.main {
 		width: 100%;
 	}
