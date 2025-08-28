@@ -34,6 +34,6 @@
 	}
 
 	.content.active {
-		border: 3px solid #ff6b9d;
+		background-color: #e1a9be;
 	}
 </style>

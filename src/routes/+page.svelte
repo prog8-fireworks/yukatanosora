@@ -7,6 +7,7 @@
 
 	// === Svelte 5 runesでのstate管理 ===
 	let selectedColor = $state('#ebb7c8');
+	let obiColor = $state('#353333');
 	let selectedPattern = $state('solid');
 	let yukataImage = $state<HTMLImageElement | null>(null);
 	let canvasRef: HTMLCanvasElement;
@@ -49,8 +50,8 @@
 	// === Svelte 5のリアクティブ描画（ReactのuseEffectに相当）===
 	// $: はリアクティブステートメント - 依存する変数が変わると自動実行
 	$effect(() => {
-		if (canvasRef && yukataImage && selectedColor && selectedPattern) {
-			drawYukata(canvasRef, yukataImage, selectedPattern, selectedColor);
+		if (canvasRef && yukataImage && selectedColor && selectedPattern && obiColor) {
+			drawYukata(canvasRef, yukataImage, selectedPattern, selectedColor, obiColor);
 		}
 	});
 
@@ -105,7 +106,12 @@
 						{/each}
 					</div>
 				{:else if currentTab === 'obi'}
-					<h2>帯を選ぶところ</h2>
+					<ColorPicker
+						bind:hex={obiColor}
+						components={ChromeVariant}
+						sliderDirection="horizontal"
+						label="帯の色を選ぶ"
+					/>
 					<div class="item-grid">
 						<ItemCard title="花" />
 						<ItemCard title="蝶" />
@@ -130,6 +136,10 @@
 		<div class="right-box">
 			<div class="inner-right-box">
 				<canvas bind:this={canvasRef} width="400" height="700" class="image"></canvas>
+				<img src="/komono-design/geta.png" class="geta" alt="" />
+				<img src="/komono-design/higasa.png" class="higasa" alt="" />
+				<img src="/komono-design/kinchaku.png" class="kinchaku" alt="" />
+				<img src="/komono-design/obidome.png" class="obidome" alt="" />
 			</div>
 		</div>
 	</div>
@@ -205,6 +215,8 @@
 		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 		box-sizing: border-box;
 		width: 50%; /* 左右の幅を調整 */
+		border-radius: 12px;
+		overflow: hidden;
 	}
 
 	.right-box {
@@ -213,18 +225,55 @@
 		padding: 20px;
 		box-sizing: border-box;
 		width: 50%; /* 左右の幅を調整 */
+		border-radius: 12px;
 	}
 	.inner-right-box {
-		background-color: #e6e6fa; /* 内側の四角 */
-		border-radius: 15px;
-		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+		background-color: #fff; /* 内側の四角 */
+		/* border-radius: 15px; */
+		/* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); */
 		width: 100%; /* サイズを調整 */
 		height: 100%; /* サイズを調整 */
 		display: grid;
+		position: relative;
 	}
 	.image {
 		height: auto;
 		object-fit: contain;
 		margin: 0 auto;
+	}
+
+	.geta {
+		position: absolute;
+		bottom: 20px;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 120px;
+		height: auto;
+	}
+
+	.higasa {
+		position: absolute;
+		top: 0px;
+		left: 30px;
+		width: 280px;
+		height: auto;
+		z-index: 10;
+	}
+	.kinchaku {
+		position: absolute;
+		top: 45%;
+		right: 35px;
+		width: 140px;
+		height: auto;
+		z-index: 10;
+	}
+	.obidome {
+		position: absolute;
+		top: 42%;
+		left: 51%;
+		transform: translate(-50%, -50%);
+		width: 120px;
+		height: auto;
+		z-index: 10;
 	}
 </style>

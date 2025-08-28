@@ -3,7 +3,8 @@ export const drawYukata = (
 	canvas: HTMLCanvasElement,
 	yukataImage: HTMLImageElement,
 	selectedPattern: string,
-	selectedColor: string
+	selectedColor: string,
+	obiColor: string
 ): void => {
 	const ctx = canvas.getContext('2d');
 	if (!ctx) return; // null チェック
@@ -24,6 +25,12 @@ export const drawYukata = (
 	// 4. 黒い線を重ね描き
 	ctx.globalCompositeOperation = 'multiply';
 	ctx.drawImage(yukataImage, 0, 0, width, height);
+
+	// // 5. 帯の部分の線画を消す
+	// maskObiArea(ctx, width, height);
+
+	// 6. 帯の色を重ね描き
+	drawObiColor(ctx, obiColor, width, height);
 
 	// リセット
 	ctx.globalCompositeOperation = 'source-over';
@@ -92,4 +99,49 @@ const drawPattern = (
 			ctx.stroke();
 		}
 	}
+};
+
+// 帯部分の線画をマスクで消す関数
+const maskObiArea = (ctx: CanvasRenderingContext2D, width: number, height: number): void => {
+	// 帯の領域を指定
+	const x = width * 0.35;
+	const y = width * 0.64;
+	const w = width * 0.32;
+	const h = height * 0.09;
+
+	// destination-outで帯部分を削除
+	ctx.globalCompositeOperation = 'destination-out';
+	ctx.fillStyle = 'black'; // 色は何でもOK
+	ctx.beginPath();
+	ctx.roundRect(x, y, w, h, 5);
+	ctx.fill();
+};
+
+// 帯の色を描画する関数
+const drawObiColor = (
+	ctx: CanvasRenderingContext2D,
+	obiColor: string,
+	width: number,
+	height: number,
+	opacity = 0.9
+): void => {
+	const originalAlpha = ctx.globalAlpha;
+
+	// 透明度を設定
+	ctx.globalAlpha = opacity;
+	ctx.globalCompositeOperation = 'source-over';
+	ctx.fillStyle = obiColor;
+
+	// 帯っぽい形状を描画（角丸の長方形）
+	const x = width * 0.35;
+	const y = height * 0.365;
+	const w = width * 0.32;
+	const h = height * 0.092;
+
+	ctx.beginPath();
+	ctx.roundRect(x, y, w, h, 5);
+	ctx.fill();
+
+	// 元に戻す
+	ctx.globalAlpha = originalAlpha;
 };
