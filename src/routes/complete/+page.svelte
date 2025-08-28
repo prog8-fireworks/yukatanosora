@@ -1,3 +1,148 @@
+<script lang="ts">
+	import { page } from '$app/stores';
+	import { drawYukata, yukataActions, yukataDesignStore, type YukataDesign } from '$lib';
+	import { onMount } from 'svelte';
+
+	let yukataImage = $state<HTMLImageElement | null>(null);
+	let canvasRef: HTMLCanvasElement;
+
+	// === Svelte 5でstoreを使う ===
+	let designState = $state<YukataDesign>();
+	$effect(() => {
+		const unsubscribe = yukataDesignStore.subscribe((value) => {
+			designState = value;
+		});
+		return unsubscribe;
+	});
+
+	// === URLパラメータから設定を復元 ===
+	$effect(() => {
+		if ($page.url.searchParams.size > 0) {
+			yukataActions.loadFromUrlParams($page.url.searchParams);
+		}
+	});
+
+	// === 画像読み込み関数 ===
+	const loadYukataImage = (imagePath: string): Promise<HTMLImageElement> => {
+		return new Promise((resolve, reject) => {
+			const img = new Image();
+			img.crossOrigin = 'anonymous';
+
+			img.onload = (): void => {
+				yukataImage = img;
+				resolve(img);
+			};
+
+			img.onerror = (): void => {
+				console.error('浴衣画像の読み込みに失敗しました:', imagePath);
+				reject(new Error(`画像読み込み失敗: ${imagePath}`));
+			};
+
+			img.src = imagePath;
+		});
+	};
+
+	// === リアクティブ描画 ===
+	$effect(() => {
+		if (canvasRef && yukataImage && designState) {
+			drawYukata(
+				canvasRef,
+				yukataImage,
+				designState.selectedPattern,
+				designState.selectedColor,
+				designState.obiColor
+			);
+		}
+	});
+
+	// === SNS共有機能 ===
+	const shareToSocial = () => {
+		if (!designState) return;
+
+		const shareUrl = yukataActions.generateShareUrl(designState, window.location.origin);
+		const shareText = '素敵な浴衣が完成しました！ #浴衣の空';
+
+		// クリップボードにコピー
+		navigator.clipboard
+			.writeText(shareUrl)
+			.then(() => {
+				alert('共有URLがクリップボードにコピーされました！');
+			})
+			.catch(() => {
+				// フォールバック: プロンプトで表示
+				prompt('この URLをコピーして共有してください:', shareUrl);
+			});
+
+		// SNS共有オプション（オプション）
+		if (navigator.share) {
+			navigator
+				.share({
+					title: '浴衣の空',
+					text: shareText,
+					url: shareUrl
+				})
+				.catch(console.log);
+		}
+	};
+
+	// === 画像ダウンロード機能 ===
+	const downloadImage = async () => {
+		if (!canvasRef) return;
+
+		try {
+			// 新しいcanvasを作成して合成
+			const downloadCanvas = document.createElement('canvas');
+			const container = document.querySelector('.preview-image-wrapper') as HTMLElement;
+			if (!container) return;
+			const containerRect = container.getBoundingClientRect();
+			const canvasRect = canvasRef.getBoundingClientRect();
+			downloadCanvas.width = Math.round(containerRect.width);
+			downloadCanvas.height = Math.round(containerRect.height);
+			const downloadCtx = downloadCanvas.getContext('2d');
+			if (!downloadCtx) return;
+
+			// 浴衣のcanvasを描画
+			const offsetX = canvasRect.left - containerRect.left;
+			const offsetY = canvasRect.top - containerRect.top;
+			downloadCtx.drawImage(canvasRef, offsetX, offsetY, canvasRect.width, canvasRect.height);
+
+			// 小物を合成
+			const komono = document.querySelectorAll('.preview-image-wrapper img');
+			for (const img of komono) {
+				const htmlImg = img as HTMLImageElement;
+				if (htmlImg.complete) {
+					const rect = htmlImg.getBoundingClientRect();
+					const containerRect = document
+						.querySelector('.preview-image-wrapper')
+						?.getBoundingClientRect();
+					if (containerRect) {
+						const x = rect.left - containerRect.left;
+						const y = rect.top - containerRect.top;
+						downloadCtx.drawImage(htmlImg, x, y, rect.width, rect.height);
+					}
+				}
+			}
+
+			// ダウンロード
+			const link = document.createElement('a');
+			link.download = 'my-yukata.png';
+			link.href = downloadCanvas.toDataURL();
+			link.click();
+		} catch (error) {
+			console.error('ダウンロードに失敗しました:', error);
+		}
+	};
+
+	// === 初期化 ===
+	onMount(async () => {
+		try {
+			await loadYukataImage('/yukata.png');
+		} catch (error) {
+			console.error('初期画像の読み込みに失敗:', error);
+		}
+	});
+</script>
+
 <!-- HTMLの中身だけ書く -->
 <div class="container">
 	<div class="header">
@@ -10,13 +155,26 @@
 			<!-- ここが完成画像 -->
 			<div class="preview-container">
 				<div class="preview-image-wrapper">
-					<img src="/image.png" alt="完成した浴衣" class="yukata-image" />
+					<canvas bind:this={canvasRef} width="400" height="700" class="yukata-canvas"></canvas>
+					<!-- 小物の画像を重ねる -->
+					{#if designState?.selectedItems.includes('geta')}
+						<img src="/komono-design/geta.png" class="geta" alt="" />
+					{/if}
+					{#if designState?.selectedItems.includes('higasa')}
+						<img src="/komono-design/higasa.png" class="higasa" alt="" />
+					{/if}
+					{#if designState?.selectedItems.includes('kinchaku')}
+						<img src="/komono-design/kinchaku.png" class="kinchaku" alt="" />
+					{/if}
+					{#if designState?.selectedItems.includes('obidome')}
+						<img src="/komono-design/obidome.png" class="obidome" alt="" />
+					{/if}
 				</div>
 			</div>
 
 			<!-- ここがボタン類 -->
 			<div class="buttons">
-				<button class="btn download-btn">
+				<button class="btn download-btn" onclick={downloadImage}>
 					<i class="fas fa-download"></i>
 					<span>画像ダウンロード</span>
 				</button>
@@ -28,7 +186,7 @@
 		</div>
 	</div>
 
-	<a href="/" class="btn new-create-btn">新しく作成→</a>
+	<a href="/" class="btn new-create-btn" onclick={() => yukataActions.reset()}>新しく作成→</a>
 
 	<!-- 左下の桜 -->
 	<img src="/sakura/sakura-hidari.png" alt="" aria-hidden="true" class="sakura sakura-left" />
@@ -96,9 +254,11 @@
 	.preview-image-wrapper {
 		overflow: hidden;
 		border-radius: 15px;
+		position: relative;
+		padding: 0 40px;
 	}
 
-	.yukata-image {
+	.yukata-canvas {
 		display: block;
 		max-width: 100%;
 		height: auto;
@@ -156,6 +316,44 @@
 		width: auto;
 		padding: 15px 30px;
 		z-index: 1000; /* mi--:ブラウザを小さく開いてる時にクリックできなかったので、これを追加しました */
+	}
+
+	/* 小物のスタイル */
+	.geta {
+		position: absolute;
+		bottom: 20px;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 120px;
+		height: auto;
+	}
+
+	.higasa {
+		position: absolute;
+		top: 0px;
+		left: 30px;
+		width: 280px;
+		height: auto;
+		z-index: 10;
+	}
+
+	.kinchaku {
+		position: absolute;
+		top: 45%;
+		right: 35px;
+		width: 140px;
+		height: auto;
+		z-index: 10;
+	}
+
+	.obidome {
+		position: absolute;
+		top: 42%;
+		left: 51%;
+		transform: translate(-50%, -50%);
+		width: 120px;
+		height: auto;
+		z-index: 10;
 	}
 
 	.sakura {
