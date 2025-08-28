@@ -40,20 +40,22 @@
 <!-- スタイル(CSS) -->
 <style>
 	.container {
-		width: 100%;
-		padding: 20px;
-		box-sizing: border-box;
 		display: flex;
 		flex-direction: column;
+		flex-direction: column;
 		align-items: center;
+		min-height: 100vh; /* 画面高さに合わせる */
+		justify-content: center;
+		padding: 20px; /* 左右に余白 */
+		box-sizing: border-box;
 		text-align: center;
 	}
 
 	.header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
 		position: absolute;
+		width: 100%;
+		display: flex;
+		align-items: center;
 		top: 0px;
 		left: 0px;
 		right: 0px;
@@ -82,6 +84,7 @@
 		font-size: 35px;
 		font-weight: 700;
 		color: #4b3774;
+		margin-top: 35px;
 		margin-bottom: 35px;
 	}
 
@@ -188,10 +191,10 @@
 		}
 		.wrapper {
 			flex-direction: column;
-			gap: 40px;
+			gap: 30px;
 		}
 		.sakura {
-			width: 80px;
+			width: 300px;
 			min-width: 0; /* 上書きしてちゃんと小さくなるように */
 		}
 	}
