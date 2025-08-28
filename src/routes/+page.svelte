@@ -74,7 +74,8 @@
 	// === 完成ページへのリンク生成 ===
 	const getCompletePageUrl = () => {
 		if (!designState) return '/complete';
-		return yukataActions.generateShareUrl(designState, window.location.origin);
+		const origin = typeof window !== 'undefined' ? window.location.origin : '';
+		return yukataActions.generateShareUrl(designState, origin);
 	};
 
 	// === コンポーネント初期化（ReactのuseEffectの初回実行に相当）===

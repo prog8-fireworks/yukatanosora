@@ -54,9 +54,9 @@ export const yukataActions = {
 		const items = searchParams.get('items');
 
 		const design: YukataDesign = {
-			selectedColor: color ? decodeURIComponent(color) : defaultDesign.selectedColor,
-			obiColor: obiColor ? decodeURIComponent(obiColor) : defaultDesign.obiColor,
-			selectedPattern: pattern || defaultDesign.selectedPattern,
+			selectedColor: color ?? defaultDesign.selectedColor,
+			obiColor: obiColor ?? defaultDesign.obiColor,
+			selectedPattern: pattern ?? defaultDesign.selectedPattern,
 			selectedItems: items ? items.split(',').filter(Boolean) : defaultDesign.selectedItems
 		};
 
@@ -65,8 +65,8 @@ export const yukataActions = {
 
 	generateShareUrl: (currentDesign: YukataDesign, baseUrl: string): string => {
 		const params = new URLSearchParams();
-		params.set('color', encodeURIComponent(currentDesign.selectedColor));
-		params.set('obi', encodeURIComponent(currentDesign.obiColor));
+		params.set('color', currentDesign.selectedColor);
+		params.set('obi', currentDesign.obiColor);
 		params.set('pattern', currentDesign.selectedPattern);
 		if (currentDesign.selectedItems.length > 0) {
 			params.set('items', currentDesign.selectedItems.join(','));

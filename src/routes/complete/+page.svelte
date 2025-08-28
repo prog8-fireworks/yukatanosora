@@ -92,13 +92,19 @@
 		try {
 			// 新しいcanvasを作成して合成
 			const downloadCanvas = document.createElement('canvas');
-			downloadCanvas.width = 480;
-			downloadCanvas.height = 700;
+			const container = document.querySelector('.preview-image-wrapper') as HTMLElement;
+			if (!container) return;
+			const containerRect = container.getBoundingClientRect();
+			const canvasRect = canvasRef.getBoundingClientRect();
+			downloadCanvas.width = Math.round(containerRect.width);
+			downloadCanvas.height = Math.round(containerRect.height);
 			const downloadCtx = downloadCanvas.getContext('2d');
 			if (!downloadCtx) return;
 
 			// 浴衣のcanvasを描画
-			downloadCtx.drawImage(canvasRef, 0, 0);
+			const offsetX = canvasRect.left - containerRect.left;
+			const offsetY = canvasRect.top - containerRect.top;
+			downloadCtx.drawImage(canvasRef, offsetX, offsetY, canvasRect.width, canvasRect.height);
 
 			// 小物を合成
 			const komono = document.querySelectorAll('.preview-image-wrapper img');
