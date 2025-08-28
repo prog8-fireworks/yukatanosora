@@ -1,7 +1,75 @@
 <script lang="ts">
+	import { drawYukata } from '$lib';
 	import ItemCard from '$lib/components/ItemCard.svelte';
-
+	import { onMount } from 'svelte';
+	import ColorPicker, { ChromeVariant } from 'svelte-awesome-color-picker';
 	let currentTab = $state('gara');
+
+	// === Svelte 5 runesでのstate管理 ===
+	let selectedColor = $state('#ebb7c8');
+	let obiColor = $state('#353333');
+	let selectedPattern = $state('solid');
+	let yukataImage = $state<HTMLImageElement | null>(null);
+	let canvasRef: HTMLCanvasElement;
+	let selectedItems = $state<string[]>([]); // 小物の選択状態を管理
+
+	// === パターンのオプション ===
+	interface PatternOption {
+		id: string;
+		name: string;
+	}
+
+	const patterns: PatternOption[] = [
+		{ id: 'solid', name: '無地' },
+		{ id: 'dots', name: '水玉' },
+		{ id: 'stripes', name: 'ストライプ' },
+		{ id: 'flowers', name: '花柄' },
+		{ id: 'waves', name: '青海波' }
+	];
+
+	const items: PatternOption[] = [
+		{ id: 'geta', name: '下駄' },
+		{ id: 'higasa', name: '日傘' },
+		{ id: 'kinchaku', name: '巾着' },
+		{ id: 'obidome', name: '帯留め' }
+	];
+
+	// === 画像読み込み関数 ===
+	const loadYukataImage = (imagePath: string): Promise<HTMLImageElement> => {
+		return new Promise((resolve, reject) => {
+			const img = new Image();
+			img.crossOrigin = 'anonymous';
+
+			img.onload = (): void => {
+				yukataImage = img;
+				resolve(img);
+			};
+
+			img.onerror = (): void => {
+				console.error('浴衣画像の読み込みに失敗しました:', imagePath);
+				reject(new Error(`画像読み込み失敗: ${imagePath}`));
+			};
+
+			img.src = imagePath;
+		});
+	};
+
+	// === Svelte 5のリアクティブ描画（ReactのuseEffectに相当）===
+	// $: はリアクティブステートメント - 依存する変数が変わると自動実行
+	$effect(() => {
+		if (canvasRef && yukataImage && selectedColor && selectedPattern && obiColor) {
+			drawYukata(canvasRef, yukataImage, selectedPattern, selectedColor, obiColor);
+		}
+	});
+
+	// === コンポーネント初期化（ReactのuseEffectの初回実行に相当）===
+	onMount(async () => {
+		try {
+			await loadYukataImage('/yukata.png');
+		} catch (error) {
+			console.error('初期画像の読み込みに失敗:', error);
+		}
+	});
 </script>
 
 <!-- HTMLの中身だけ書く -->
@@ -17,10 +85,6 @@
 					onclick={() => (currentTab = 'gara')}>柄</button
 				>
 				<button
-					class="tab {currentTab === 'obi' ? 'active' : ''}"
-					onclick={() => (currentTab = 'obi')}>帯</button
-				>
-				<button
 					class="tab {currentTab === 'item' ? 'active' : ''}"
 					onclick={() => (currentTab = 'item')}>小物</button
 				>
@@ -29,40 +93,63 @@
 			<!-- タブの内容 -->
 			<div class="tab-content">
 				{#if currentTab === 'gara'}
-					<h2>柄を選ぶところ</h2>
+					<ColorPicker
+						bind:hex={selectedColor}
+						components={ChromeVariant}
+						sliderDirection="horizontal"
+						label="生地の色を選ぶ"
+					/>
+					<ColorPicker
+						bind:hex={obiColor}
+						components={ChromeVariant}
+						sliderDirection="horizontal"
+						label="帯の色を選ぶ"
+					/>
 					<div class="item-grid">
-						<ItemCard title="花" />
-						<ItemCard title="蝶" />
-						<ItemCard title="波" />
-						<ItemCard title="星" />
-						<ItemCard title="葉" />
-						<ItemCard title="幾何学" />
-					</div>
-				{:else if currentTab === 'obi'}
-					<h2>帯を選ぶところ</h2>
-					<div class="item-grid">
-						<ItemCard title="花" />
-						<ItemCard title="蝶" />
-						<ItemCard title="波" />
-						<ItemCard title="星" />
-						<ItemCard title="葉" />
-						<ItemCard title="幾何学" />
+						{#each patterns as pattern (pattern.id)}
+							<ItemCard
+								title={pattern.name}
+								onclick={() => (selectedPattern = pattern.id)}
+								active={selectedPattern === pattern.id}
+							/>
+						{/each}
 					</div>
 				{:else if currentTab === 'item'}
-					<h2>小物を選ぶところ</h2>
 					<div class="item-grid">
-						<ItemCard title="花" />
-						<ItemCard title="蝶" />
-						<ItemCard title="波" />
-						<ItemCard title="星" />
-						<ItemCard title="葉" />
-						<ItemCard title="幾何学" />
+						{#each items as item (item.id)}
+							<ItemCard
+								title={item.name}
+								onclick={() => {
+									if (!selectedItems.includes(item.id)) {
+										selectedItems = [...selectedItems, item.id];
+									} else {
+										selectedItems = selectedItems.filter((i) => i !== item.id);
+									}
+								}}
+								active={selectedItems.includes(item.id)}
+							/>
+						{/each}
 					</div>
 				{/if}
 			</div>
 		</div>
 		<div class="right-box">
-			<div class="inner-right-box"></div>
+			<div class="inner-right-box">
+				<canvas bind:this={canvasRef} width="400" height="700" class="image"></canvas>
+				<!-- 小物の画像を重ねる -->
+				{#if selectedItems.includes('geta')}
+					<img src="/komono-design/geta.png" class="geta" alt="" />
+				{/if}
+				{#if selectedItems.includes('higasa')}
+					<img src="/komono-design/higasa.png" class="higasa" alt="" />
+				{/if}
+				{#if selectedItems.includes('kinchaku')}
+					<img src="/komono-design/kinchaku.png" class="kinchaku" alt="" />
+				{/if}
+				{#if selectedItems.includes('obidome')}
+					<img src="/komono-design/obidome.png" class="obidome" alt="" />
+				{/if}
+			</div>
 		</div>
 	</div>
 	<a href="/complete"> 完成ページ </a>
@@ -70,9 +157,6 @@
 
 <!-- スタイル(CSS) -->
 <style>
-	h2 {
-		margin: 0;
-	}
 	.main {
 		width: 100%;
 	}
@@ -137,6 +221,8 @@
 		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 		box-sizing: border-box;
 		width: 50%; /* 左右の幅を調整 */
+		border-radius: 12px;
+		overflow: hidden;
 	}
 
 	.right-box {
@@ -145,12 +231,55 @@
 		padding: 20px;
 		box-sizing: border-box;
 		width: 50%; /* 左右の幅を調整 */
+		border-radius: 12px;
 	}
 	.inner-right-box {
-		background-color: #e6e6fa; /* 内側の四角 */
-		border-radius: 15px;
-		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+		background-color: #fff; /* 内側の四角 */
+		/* border-radius: 15px; */
+		/* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); */
 		width: 100%; /* サイズを調整 */
 		height: 100%; /* サイズを調整 */
+		display: grid;
+		position: relative;
+	}
+	.image {
+		height: auto;
+		object-fit: contain;
+		margin: 0 auto;
+	}
+
+	.geta {
+		position: absolute;
+		bottom: 20px;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 120px;
+		height: auto;
+	}
+
+	.higasa {
+		position: absolute;
+		top: 0px;
+		left: 30px;
+		width: 280px;
+		height: auto;
+		z-index: 10;
+	}
+	.kinchaku {
+		position: absolute;
+		top: 45%;
+		right: 35px;
+		width: 140px;
+		height: auto;
+		z-index: 10;
+	}
+	.obidome {
+		position: absolute;
+		top: 42%;
+		left: 51%;
+		transform: translate(-50%, -50%);
+		width: 120px;
+		height: auto;
+		z-index: 10;
 	}
 </style>
