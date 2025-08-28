@@ -246,6 +246,7 @@
 		font-size: 20px;
 		transition: background-color 0.3s;
 		width: 100%;
+		border-radius: 12px 12px 0 0;
 	}
 
 	.tabs .active {
@@ -264,9 +265,9 @@
 		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 		width: 50%;
 		border-radius: 12px;
-		overflow-y: auto; /* ← hiddenをautoに変更 */
 		max-height: 80vh; /* 高さを画面に収める */
 		padding-bottom: 20px;
+		height: auto;
 	}
 
 	.sacp {
@@ -399,7 +400,6 @@
 		.left-box {
 			order: 1; /* 下に表示 */
 			width: 100%;
-			max-height: 60vh;
 		}
 		.inner-right-box {
 			width: 100%;

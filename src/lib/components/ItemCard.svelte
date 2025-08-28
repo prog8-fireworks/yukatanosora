@@ -33,13 +33,12 @@
 
 <style>
 	.content {
-		background-color: rgb(201, 201, 201);
+		background-color: rgb(218, 218, 218);
 		padding: 10px;
 		border-radius: 12px;
 		text-align: center;
 		border: none;
 		cursor: pointer;
-		transition: background-color 0.3s;
 	}
 
 	.icon {
