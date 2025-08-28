@@ -101,22 +101,6 @@ const drawPattern = (
 	}
 };
 
-// 帯部分の線画をマスクで消す関数
-const maskObiArea = (ctx: CanvasRenderingContext2D, width: number, height: number): void => {
-	// 帯の領域を指定
-	const x = width * 0.35;
-	const y = width * 0.64;
-	const w = width * 0.32;
-	const h = height * 0.09;
-
-	// destination-outで帯部分を削除
-	ctx.globalCompositeOperation = 'destination-out';
-	ctx.fillStyle = 'black'; // 色は何でもOK
-	ctx.beginPath();
-	ctx.roundRect(x, y, w, h, 5);
-	ctx.fill();
-};
-
 // 帯の色を描画する関数
 const drawObiColor = (
 	ctx: CanvasRenderingContext2D,
