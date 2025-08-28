@@ -180,7 +180,7 @@
 		</div>
 	</div>
 
-	<a href="/" class="btn new-create-btn">新しく作成→</a>
+	<a href="/" class="btn new-create-btn" onclick={() => yukataActions.reset()}>新しく作成→</a>
 
 	<!-- 左下の桜 -->
 	<img src="/sakura/sakura-hidari.png" alt="" aria-hidden="true" class="sakura sakura-left" />

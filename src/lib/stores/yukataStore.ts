@@ -10,7 +10,7 @@ export interface YukataDesign {
 
 // デフォルト値
 const defaultDesign: YukataDesign = {
-	selectedColor: '#ebb7c8',
+	selectedColor: '#f5f5f5',
 	obiColor: '#353333',
 	selectedPattern: 'solid',
 	selectedItems: []
