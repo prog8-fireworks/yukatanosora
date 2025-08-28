@@ -1,17 +1,21 @@
 <script lang="ts">
-	import { drawYukata } from '$lib';
+	import { drawYukata, yukataActions, yukataDesignStore, type YukataDesign } from '$lib';
 	import ItemCard from '$lib/components/ItemCard.svelte';
 	import { onMount } from 'svelte';
 	import ColorPicker, { ChromeVariant } from 'svelte-awesome-color-picker';
-	let currentTab = $state('gara');
 
-	// === Svelte 5 runesでのstate管理 ===
-	let selectedColor = $state('#ebb7c8');
-	let obiColor = $state('#353333');
-	let selectedPattern = $state('solid');
+	let currentTab = $state('gara');
 	let yukataImage = $state<HTMLImageElement | null>(null);
 	let canvasRef: HTMLCanvasElement;
-	let selectedItems = $state<string[]>([]); // 小物の選択状態を管理
+
+	// === Svelte 5でstoreを使う ===
+	let designState = $state<YukataDesign>();
+	$effect(() => {
+		const unsubscribe = yukataDesignStore.subscribe((value) => {
+			designState = value;
+		});
+		return unsubscribe;
+	});
 
 	// === パターンのオプション ===
 	interface PatternOption {
@@ -55,12 +59,24 @@
 	};
 
 	// === Svelte 5のリアクティブ描画（ReactのuseEffectに相当）===
-	// $: はリアクティブステートメント - 依存する変数が変わると自動実行
 	$effect(() => {
-		if (canvasRef && yukataImage && selectedColor && selectedPattern && obiColor) {
-			drawYukata(canvasRef, yukataImage, selectedPattern, selectedColor, obiColor);
+		if (canvasRef && yukataImage && designState) {
+			drawYukata(
+				canvasRef,
+				yukataImage,
+				designState.selectedPattern,
+				designState.selectedColor,
+				designState.obiColor
+			);
 		}
 	});
+
+	// === 完成ページへのリンク生成 ===
+	const getCompletePageUrl = () => {
+		if (!designState) return '/complete';
+		const origin = typeof window !== 'undefined' ? window.location.origin : '';
+		return yukataActions.generateShareUrl(designState, origin);
+	};
 
 	// === コンポーネント初期化（ReactのuseEffectの初回実行に相当）===
 	onMount(async () => {
@@ -90,17 +106,18 @@
 				>
 			</nav>
 
-			<!-- タブの内容 -->
 			<div class="tab-content">
 				{#if currentTab === 'gara'}
 					<ColorPicker
-						bind:hex={selectedColor}
+						hex={designState?.selectedColor}
+						onInput={(e) => yukataActions.setColor(e.hex || '#ffffff')}
 						components={ChromeVariant}
 						sliderDirection="horizontal"
 						label="生地の色を選ぶ"
 					/>
 					<ColorPicker
-						bind:hex={obiColor}
+						hex={designState?.obiColor}
+						onInput={(e) => yukataActions.setObiColor(e.hex || '#ffffff')}
 						components={ChromeVariant}
 						sliderDirection="horizontal"
 						label="帯の色を選ぶ"
@@ -109,8 +126,8 @@
 						{#each patterns as pattern (pattern.id)}
 							<ItemCard
 								title={pattern.name}
-								onclick={() => (selectedPattern = pattern.id)}
-								active={selectedPattern === pattern.id}
+								onclick={() => yukataActions.setPattern(pattern.id)}
+								active={designState?.selectedPattern === pattern.id}
 							/>
 						{/each}
 					</div>
@@ -119,14 +136,8 @@
 						{#each items as item (item.id)}
 							<ItemCard
 								title={item.name}
-								onclick={() => {
-									if (!selectedItems.includes(item.id)) {
-										selectedItems = [...selectedItems, item.id];
-									} else {
-										selectedItems = selectedItems.filter((i) => i !== item.id);
-									}
-								}}
-								active={selectedItems.includes(item.id)}
+								onclick={() => yukataActions.toggleItem(item.id)}
+								active={designState?.selectedItems.includes(item.id)}
 							/>
 						{/each}
 					</div>
@@ -137,22 +148,22 @@
 			<div class="inner-right-box">
 				<canvas bind:this={canvasRef} width="400" height="700" class="image"></canvas>
 				<!-- 小物の画像を重ねる -->
-				{#if selectedItems.includes('geta')}
+				{#if designState?.selectedItems.includes('geta')}
 					<img src="/komono-design/geta.png" class="geta" alt="" />
 				{/if}
-				{#if selectedItems.includes('higasa')}
+				{#if designState?.selectedItems.includes('higasa')}
 					<img src="/komono-design/higasa.png" class="higasa" alt="" />
 				{/if}
-				{#if selectedItems.includes('kinchaku')}
+				{#if designState?.selectedItems.includes('kinchaku')}
 					<img src="/komono-design/kinchaku.png" class="kinchaku" alt="" />
 				{/if}
-				{#if selectedItems.includes('obidome')}
+				{#if designState?.selectedItems.includes('obidome')}
 					<img src="/komono-design/obidome.png" class="obidome" alt="" />
 				{/if}
 			</div>
 		</div>
 	</div>
-	<a href="/complete"> 完成ページ </a>
+	<a href={getCompletePageUrl()}> 完成ページ </a>
 </main>
 
 <!-- スタイル(CSS) -->
@@ -243,8 +254,9 @@
 		position: relative;
 	}
 	.image {
+		display: block;
+		max-width: 100%;
 		height: auto;
-		object-fit: contain;
 		margin: 0 auto;
 	}
 
