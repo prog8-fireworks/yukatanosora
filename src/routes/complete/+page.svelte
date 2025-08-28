@@ -20,10 +20,26 @@
 					<i class="fas fa-download"></i>
 					<span>画像ダウンロード</span>
 				</button>
-				<button class="btn share-btn">
-					<i class="fas fa-share-alt"></i>
-					<span>SNS共有</span>
-				</button>
+				<!-- シェアボタン -->
+				<button class="btn share-btn" id="openModal">Twitterでシェア</button>
+				<!-- モーダル -->
+				<div id="twitterModal" class="modal">
+					<div class="modal-content">
+						<span class="close">&times;</span>
+						<h2>Twitterでシェアする</h2>
+						<a
+							href="https://twitter.com/intent/tweet?
+								text=🎆 私の浴衣デザインが完成しました！ 🎆&
+								url=&
+								via=&
+								hashtags=yukatanosora,浴衣カスタム,夏祭りコーデ"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+						Twitterで共有する
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -35,7 +51,29 @@
 
 	<!-- 右上の桜 -->
 	<img src="/sakura/sakura-migiue.png" alt="" aria-hidden="true" class="sakura sakura-right" />
+	<script>
+	document.addEventListener("DOMContentLoaded", function () {
+			const modal = document.getElementById("twitterModal");
+			const btn = document.getElementById("openModal");
+			const span = document.getElementsByClassName("close")[0];
+
+			btn.onclick = function () {
+					modal.style.display = "block";
+			};
+
+			span.onclick = function () {
+					modal.style.display = "none";
+			};
+
+			// window.onclick = function (event) {
+			// 		if (event.target == modal) {
+			// 				modal.style.display = "none";
+			// 		}
+			// };
+	});
+	</script>
 </div>
+
 
 <!-- スタイル(CSS) -->
 <style>
@@ -142,6 +180,33 @@
 	.download-btn {
 		background: linear-gradient(90deg, #1f64c6, #0d3b66);
 	}
+	.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
+	}
+
+	.modal-content {
+	background-color: #fff;
+	margin: 15% auto;
+	padding: 20px;
+	border-radius: 8px;
+	width: 80%;
+	max-width: 400px;
+	}
+
+	.close {
+	float: right;
+	font-size: 28px;
+	cursor: pointer;
+	}
+
 
 	.share-btn {
 		background: linear-gradient(90deg, #c965c6, #9b59b6);
