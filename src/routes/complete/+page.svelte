@@ -1,4 +1,4 @@
-<!-- HTMLの中身だけ書く -->
+N<!-- HTMLの中身だけ書く -->
 <div class="container">
 	<div class="header">
 		<div class="logo">浴衣の空</div>
@@ -21,25 +21,21 @@
 					<span>画像ダウンロード</span>
 				</button>
 				<!-- シェアボタン -->
-				<button class="btn share-btn" id="openModal">Twitterでシェア</button>
+        <button class="btn share-btn" onclick={openModal}>Twitterでシェア</button>
 				<!-- モーダル -->
-				<div id="twitterModal" class="modal">
-					<div class="modal-content">
-						<span class="close">&times;</span>
-						<h2>Twitterでシェアする</h2>
-						<a
-							href="https://twitter.com/intent/tweet?
-								text=🎆 私の浴衣デザインが完成しました！ 🎆&
-								url=&
-								via=&
-								hashtags=yukatanosora,浴衣カスタム,夏祭りコーデ"
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-						Twitterで共有する
-						</a>
-					</div>
-				</div>
+				{#if showModal}
+          <!-- svelte-ignore a11y_click_events_have_key_events -->
+          <!-- svelte-ignore a11y_no_static_element_interactions -->
+          <div class="modal" onclick={closeModal}>
+            <div class="modal-content" onclick={(e)=>e.stopPropagation()}>
+              <span class="close" onclick={closeModal}>&times;</span>
+              <h2>Twitterでシェアする</h2>
+              <a href={twitterShareUrl} target="_blank" rel="noopener noreferrer">
+                Twitterで共有する
+              </a>
+            </div>
+          </div>
+        {/if}
 			</div>
 		</div>
 	</div>
@@ -51,28 +47,29 @@
 
 	<!-- 右上の桜 -->
 	<img src="/sakura/sakura-migiue.png" alt="" aria-hidden="true" class="sakura sakura-right" />
-	<script>
-	document.addEventListener("DOMContentLoaded", function () {
-			const modal = document.getElementById("twitterModal");
-			const btn = document.getElementById("openModal");
-			const span = document.getElementsByClassName("close")[0];
 
-			btn.onclick = function () {
-					modal.style.display = "block";
-			};
-
-			span.onclick = function () {
-					modal.style.display = "none";
-			};
-
-			// window.onclick = function (event) {
-			// 		if (event.target == modal) {
-			// 				modal.style.display = "none";
-			// 		}
-			// };
-	});
-	</script>
 </div>
+<script>
+  import { onMount } from 'svelte';
+	let showModal = $state(false)
+  let twitterShareUrl = '';
+
+  onMount(() => {
+    const tweetText = encodeURIComponent("🎆 私の浴衣デザインが完成しました！ 🎆");
+    const pageUrl = encodeURIComponent(window.location.href);
+    const hashtags = "yukatanosora,浴衣カスタム,夏祭りコーデ";
+
+    twitterShareUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=${pageUrl}&hashtags=${hashtags}`;
+  });
+
+  function openModal() {
+    showModal = true;
+  }
+
+  function closeModal() {
+    showModal = false;
+  }
+</script>
 
 
 <!-- スタイル(CSS) -->
@@ -181,7 +178,6 @@
 		background: linear-gradient(90deg, #1f64c6, #0d3b66);
 	}
 	.modal {
-  display: none;
   position: fixed;
   z-index: 1000;
   left: 0;
