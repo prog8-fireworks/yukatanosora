@@ -33,13 +33,12 @@
 
 <style>
 	.content {
-		background-color: rgb(201, 201, 201);
+		background-color: rgb(218, 218, 218);
 		padding: 10px;
 		border-radius: 12px;
 		text-align: center;
 		border: none;
 		cursor: pointer;
-		transition: background-color 0.3s;
 	}
 
 	.icon {
@@ -64,6 +63,8 @@
 	}
 
 	.content.active {
-		background-color: #e1a9be;
+		background: linear-gradient(90deg, #e1a9be, #9b59b6);
+		color: #fff; /* 文字を見やすく白色に */
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 	}
 </style>
