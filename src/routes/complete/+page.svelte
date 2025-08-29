@@ -3,6 +3,25 @@
 	import { drawYukata, yukataActions, yukataDesignStore, type YukataDesign } from '$lib';
 	import { onMount } from 'svelte';
 
+	let showModal = $state(false);
+	let twitterShareUrl = $state('');
+
+	onMount(() => {
+		const tweetText = encodeURIComponent('🎆 私の浴衣デザインが完成しました！ 🎆');
+		const pageUrl = encodeURIComponent(window.location.href);
+		const hashtags = 'yukatanosora,浴衣カスタム,夏祭りコーデ';
+
+		twitterShareUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=${pageUrl}&hashtags=${hashtags}`;
+	});
+
+	function openModal() {
+		showModal = true;
+	}
+
+	function closeModal() {
+		showModal = false;
+	}
+
 	let yukataImage = $state<HTMLImageElement | null>(null);
 	let canvasRef: HTMLCanvasElement;
 
@@ -55,34 +74,15 @@
 		}
 	});
 
-	// === SNS共有機能 ===
-	const shareToSocial = () => {
+	// === URLをコピー ===
+	const copyUrl = () => {
 		if (!designState) return;
 
-		const shareUrl = yukataActions.generateShareUrl(designState, window.location.origin);
-		const shareText = '素敵な浴衣が完成しました！ #浴衣の空';
+		const url = yukataActions.generateShareUrl(designState, window.location.origin);
 
 		// クリップボードにコピー
-		navigator.clipboard
-			.writeText(shareUrl)
-			.then(() => {
-				alert('共有URLがクリップボードにコピーされました！');
-			})
-			.catch(() => {
-				// フォールバック: プロンプトで表示
-				prompt('この URLをコピーして共有してください:', shareUrl);
-			});
-
-		// SNS共有オプション（オプション）
-		if (navigator.share) {
-			navigator
-				.share({
-					title: '浴衣の空',
-					text: shareText,
-					url: shareUrl
-				})
-				.catch(console.log);
-		}
+		navigator.clipboard.writeText(url);
+		alert('URLをコピーしました');
 	};
 
 	// === 画像ダウンロード機能 ===
@@ -178,10 +178,39 @@
 					<i class="fas fa-download"></i>
 					<span>画像ダウンロード</span>
 				</button>
-				<button class="btn share-btn">
-					<i class="fas fa-share-alt"></i>
-					<span>SNS共有</span>
-				</button>
+				<!-- シェアボタン -->
+				<button class="btn share-btn" onclick={openModal}>SNSで共有</button>
+				<!-- モーダル -->
+				{#if showModal}
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<div class="modal" onclick={closeModal}>
+						<div class="modal-content" onclick={(e) => e.stopPropagation()}>
+							<button class="close" onclick={closeModal}>&times;</button>
+							<div>
+								<h3>Xでシェアする</h3>
+								<a
+									href={twitterShareUrl}
+									class="twitter-share-button"
+									data-show-count="false"
+									data-size="large">Tweet</a
+								>
+								<script
+									async
+									src="https://platform.twitter.com/widgets.js"
+									charset="utf-8"
+								></script>
+							</div>
+							<div>
+								<h3>URLをコピーする</h3>
+								<div class="copy-url-container">
+									<input type="text" class="copy-url-input" readonly value={window.location.href} />
+									<button class="copy-btn" onclick={copyUrl}>コピー</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -306,9 +335,67 @@
 	.download-btn {
 		background: linear-gradient(90deg, #9b59b6, #e1a9be);
 	}
+	.modal {
+		position: fixed;
+		z-index: 1000;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		background-color: rgba(0, 0, 0, 0.5);
+	}
+
+	.modal-content {
+		background-color: #fff;
+		margin: 15% auto;
+		padding: 24px;
+		border-radius: 12px;
+		width: 80%;
+		max-width: 400px;
+		text-align: start;
+		position: relative;
+	}
+
+	.close {
+		font-size: 28px;
+		cursor: pointer;
+		border: none;
+		background: none;
+		color: #555;
+		padding: 6px;
+		position: absolute;
+		right: 10px;
+		top: 0;
+	}
+
+	.twitter-share-button {
+		display: block;
+		padding: 10px 20px;
+	}
 
 	.share-btn {
 		background: linear-gradient(90deg, #e1a9be, #9b59b6);
+	}
+
+	.copy-url-container {
+		display: flex;
+		gap: 10px;
+	}
+
+	.copy-url-input {
+		width: 100%;
+		padding: 10px;
+		border: 1px solid #ccc;
+		border-radius: 8px;
+	}
+	.copy-btn {
+		border: none;
+		padding: 8px 16px;
+		border-radius: 8px;
+		background: #e6e6fa;
+		color: #353333;
+		flex-shrink: 0;
+		cursor: pointer;
 	}
 
 	.new-create-btn {
@@ -322,11 +409,13 @@
 		z-index: 1000; /* mi--:ブラウザを小さく開いてる時にクリックできなかったので、これを追加しました */
 		text-decoration: none; /* ← 下線を消す */
 	}
+
 	.new-create-btn:hover {
 		background-color: #9b59b6; /* ホバー時の色 */
 		transform: translateY(2px); /* ちょっと浮いた感じ */
 	}
 	/* 小物のスタイル */
+
 	.geta,
 	.higasa,
 	.kinchaku,
@@ -375,7 +464,6 @@
 		height: auto;
 		z-index: 10;
 	}
-
 	.sakura {
 		position: fixed; /* 画面上の固定位置に配置 */
 		/* bottom は個別クラスで指定（右上は top 固定にするため） */
