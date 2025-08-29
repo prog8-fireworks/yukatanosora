@@ -193,6 +193,7 @@
 <!-- HTMLの中身だけ書く -->
 <div class="container">
 	<div class="header">
+		<img src="/yukatanosora-logo.png" alt="" class="logo-image" />
 		<div class="logo">浴衣の空</div>
 	</div>
 
@@ -235,7 +236,7 @@
 						<div class="modal-content" onclick={(e) => e.stopPropagation()}>
 							<button class="close" onclick={closeModal}>&times;</button>
 							<div>
-								<h3>Xでシェアする</h3>
+								<h3>🎆 Xでみんなに自慢する</h3>
 								<a
 									href={twitterShareUrl}
 									class="twitter-share-button"
@@ -249,7 +250,7 @@
 								></script>
 							</div>
 							<div>
-								<h3>URLをコピーする</h3>
+								<h3>🔗 デザインURLをコピー</h3>
 								<div class="copy-url-container">
 									<input type="text" class="copy-url-input" readonly value={window.location.href} />
 									<button class="copy-btn" onclick={copyUrl}>コピー</button>
@@ -297,6 +298,13 @@
 		left: 0px;
 		right: 0px;
 		padding: 20px;
+	}
+
+	.logo-image {
+		width: 50px;
+		height: 40px;
+		margin-right: 0px;
+		object-fit: contain;
 	}
 
 	.logo {
@@ -374,8 +382,8 @@
 	}
 
 	.btn:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+		transform: translateY(2px);
+		box-shadow: 0 8px 6px rgba(0.15, 0, 0, 0);
 	}
 
 	.btn i {
@@ -383,7 +391,7 @@
 	}
 
 	.download-btn {
-		background: linear-gradient(90deg, #1f64c6, #0d3b66);
+		background: linear-gradient(90deg, #9b59b6, #e1a9be);
 	}
 	.modal {
 		position: fixed;
@@ -396,14 +404,25 @@
 	}
 
 	.modal-content {
-		background-color: #fff;
-		margin: 15% auto;
+		background-color: #fffaf5;
+		margin: 35% auto; /* 画面中央に配置 */
 		padding: 24px;
+		border: 2px solid #e1a9be;
 		border-radius: 12px;
 		width: 80%;
-		max-width: 400px;
-		text-align: start;
+		max-width: 500px;
+		text-align: center;
 		position: relative;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+		font-size: 16px; /* 基本フォントサイズ */
+		line-height: 1.6;
+	}
+	.modal-content h3 {
+		font-size: 20px;
+		font-weight: bold;
+		margin-bottom: 12px;
+		color: #4b3774;
+		text-align: center;
 	}
 
 	.close {
@@ -414,22 +433,37 @@
 		color: #555;
 		padding: 6px;
 		position: absolute;
-		right: 10px;
-		top: 0;
+		right: 12px;
+		top: 0px;
+		transition: color 0.2s;
 	}
 
 	.twitter-share-button {
 		display: block;
+		margin: 0 auto;
 		padding: 10px 20px;
+		border-radius: 6px;
+		cursor: pointer;
+		transition:
+			transform 0.2s ease,
+			box-shadow 0.2s ease;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	}
+
+	/* ホバーで少し沈む動き */
+	.twitter-share-button:hover {
+		transform: translateY(2px);
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	}
 
 	.share-btn {
-		background: linear-gradient(90deg, #c965c6, #9b59b6);
+		background: linear-gradient(90deg, #e1a9be, #9b59b6);
 	}
 
 	.copy-url-container {
 		display: flex;
 		gap: 10px;
+		margin-top: 5px;
 	}
 
 	.copy-url-input {
@@ -437,6 +471,7 @@
 		padding: 10px;
 		border: 1px solid #ccc;
 		border-radius: 8px;
+		font-size: 14px;
 	}
 	.copy-btn {
 		border: none;
@@ -446,6 +481,11 @@
 		color: #353333;
 		flex-shrink: 0;
 		cursor: pointer;
+		transition: background 0.2s;
+	}
+	.copy-btn:hover {
+		background: #d4d4f7;
+		transform: translateY(1.5px);
 	}
 
 	.action-buttons {
@@ -478,7 +518,15 @@
 		font-weight: 600;
 		cursor: pointer;
 		transition: all 0.3s ease;
+		z-index: 1000; /* mi--:ブラウザを小さく開いてる時にクリックできなかったので、これを追加しました */
+		text-decoration: none; /* ← 下線を消す */
 	}
+
+	.new-create-btn:hover {
+		background-color: #9b59b6; /* ホバー時の色 */
+		transform: translateY(2px); /* ちょっと浮いた感じ */
+	}
+	/* 小物のスタイル */
 
 	.geta,
 	.higasa,
