@@ -133,6 +133,53 @@
 		}
 	};
 
+	// === 試着ページ遷移機能 ===
+	const goToTryon = async () => {
+		if (!canvasRef) return;
+
+		try {
+			// 新しいcanvasを作成して合成（downloadImageと同じ処理）
+			const canvas = document.createElement('canvas');
+			const container = document.querySelector('.preview-image-wrapper') as HTMLElement;
+			if (!container) return;
+			const containerRect = container.getBoundingClientRect();
+			const canvasRect = canvasRef.getBoundingClientRect();
+			canvas.width = Math.round(containerRect.width);
+			canvas.height = Math.round(containerRect.height);
+			const ctx = canvas.getContext('2d');
+			if (!ctx) return;
+
+			// 浴衣のcanvasを描画
+			const offsetX = canvasRect.left - containerRect.left;
+			const offsetY = canvasRect.top - containerRect.top;
+			ctx.drawImage(canvasRef, offsetX, offsetY, canvasRect.width, canvasRect.height);
+
+			// 小物を合成
+			const komono = document.querySelectorAll('.preview-image-wrapper img');
+			for (const img of komono) {
+				const htmlImg = img as HTMLImageElement;
+				if (htmlImg.complete) {
+					const rect = htmlImg.getBoundingClientRect();
+					const containerRect = document
+						.querySelector('.preview-image-wrapper')
+						?.getBoundingClientRect();
+					if (containerRect) {
+						const x = rect.left - containerRect.left;
+						const y = rect.top - containerRect.top;
+						ctx.drawImage(htmlImg, x, y, rect.width, rect.height);
+					}
+				}
+			}
+			
+			// Base64として保存
+			const dataURL = canvas.toDataURL('image/png');
+			sessionStorage.setItem('customYukataBase64', dataURL);
+			window.location.href = '/tryon';
+		} catch (error) {
+			console.error('試着ページへの遷移に失敗しました:', error);
+		}
+	};
+
 	// === 初期化 ===
 	onMount(async () => {
 		try {
@@ -216,7 +263,10 @@
 		</div>
 	</div>
 
-	<a href="/" class="btn new-create-btn" onclick={() => yukataActions.reset()}>新しく作成→</a>
+	<div class="action-buttons">
+		<button class="btn tryon-btn" onclick={goToTryon}>試着してみる→</button>
+		<a href="/" class="btn new-create-btn" onclick={() => yukataActions.reset()}>新しく作成→</a>
+	</div>
 
 	<!-- 左下の桜 -->
 	<img src="/sakura/sakura-hidari.png" alt="" aria-hidden="true" class="sakura sakura-left" />
@@ -440,14 +490,36 @@
 		transform: translateY(1.5px);
 	}
 
-	.new-create-btn {
-		background: #e1a9be;
-		color: #f8f6f6;
+	.action-buttons {
 		position: fixed;
 		bottom: 50px;
 		right: 50px;
+		display: flex;
+		gap: 15px;
+		z-index: 1000;
+	}
+
+	.new-create-btn {
+		background: #e6e6fa;
+		color: #353333;
 		width: auto;
 		padding: 15px 30px;
+		border: none;
+		border-radius: 25px;
+		text-decoration: none;
+		font-weight: 600;
+		transition: all 0.3s ease;
+	}
+
+	.tryon-btn {
+		background: linear-gradient(45deg, #e74c3c, #c0392b);
+		color: white;
+		padding: 15px 30px;
+		border: none;
+		border-radius: 25px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.3s ease;
 		z-index: 1000; /* mi--:ブラウザを小さく開いてる時にクリックできなかったので、これを追加しました */
 		text-decoration: none; /* ← 下線を消す */
 	}
@@ -528,11 +600,15 @@
 
 	/* For smaller screens */
 	@media (max-width: 768px) {
-		.new-create-btn {
+		.action-buttons {
 			position: static;
 			margin-top: 20px;
-			width: 80%;
-			z-index: 1000; /* ←mi--追加 */
+			justify-content: center;
+		}
+		
+		.new-create-btn,
+		.tryon-btn {
+			width: 150px;
 		}
 		.wrapper {
 			flex-direction: column;
