@@ -355,7 +355,7 @@
 
 	.modal-content {
 		background-color: #fffaf5;
-		margin: 40% 50%;
+		margin: 35% auto; /* 画面中央に配置 */
 		padding: 24px;
 		border: 2px solid #e1a9be;
 		border-radius: 12px;
