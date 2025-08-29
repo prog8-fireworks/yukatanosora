@@ -95,6 +95,7 @@
 	<img src="/sakura/sakurahaikei-migi.png" alt="" class="bg-image right" aria-hidden="true" />
 
 	<div class="header">
+		<img src="/yukatanosora-logo.png" alt="" class="logo-image" />
 		<div class="logo">浴衣の空</div>
 	</div>
 	<div class="container">
@@ -229,7 +230,6 @@
 		position: relative; /* absolute をやめる */
 		width: 100%;
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
 		margin-bottom: 20px; /* container との間隔 */
 		top: 0px;
@@ -243,6 +243,13 @@
 		font-size: 24px;
 		font-weight: bold;
 		color: #555;
+	}
+
+	.logo-image {
+		width: 50px;
+		height: 40px;
+		margin-right: 0px;
+		object-fit: contain;
 	}
 	.tabs {
 		display: flex;
