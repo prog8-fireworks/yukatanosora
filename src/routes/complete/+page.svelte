@@ -351,11 +351,12 @@
 		height: 100%;
 		overflow: auto;
 		background-color: rgba(0, 0, 0, 0.5);
+		display: grid;
 	}
 
 	.modal-content {
 		background-color: #fffaf5;
-		margin: 35% auto; /* 画面中央に配置 */
+		margin: auto; /* 画面中央に配置 */
 		padding: 24px;
 		border: 2px solid #e1a9be;
 		border-radius: 12px;
@@ -366,6 +367,7 @@
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 		font-size: 16px; /* 基本フォントサイズ */
 		line-height: 1.6;
+		height: fit-content;
 	}
 	.modal-content h3 {
 		font-size: 20px;
