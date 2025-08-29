@@ -320,6 +320,7 @@
 		width: auto;
 		padding: 15px 30px;
 		z-index: 1000; /* mi--:ブラウザを小さく開いてる時にクリックできなかったので、これを追加しました */
+		text-decoration: none; /* ← 下線を消す */
 	}
 	.new-create-btn:hover {
 		background-color: #9b59b6; /* ホバー時の色 */
