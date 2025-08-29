@@ -146,6 +146,7 @@
 <!-- HTMLの中身だけ書く -->
 <div class="container">
 	<div class="header">
+		<img src="/yukatanosora-logo.png" alt="" class="logo-image" />
 		<div class="logo">浴衣の空</div>
 	</div>
 
@@ -247,6 +248,13 @@
 		left: 0px;
 		right: 0px;
 		padding: 20px;
+	}
+
+	.logo-image {
+		width: 50px;
+		height: 40px;
+		margin-right: 0px;
+		object-fit: contain;
 	}
 
 	.logo {
