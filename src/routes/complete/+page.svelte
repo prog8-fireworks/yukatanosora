@@ -324,8 +324,8 @@
 	}
 
 	.btn:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+		transform: translateY(2px);
+		box-shadow: 0 8px 6px rgba(0.15, 0, 0, 0);
 	}
 
 	.btn i {
@@ -333,7 +333,7 @@
 	}
 
 	.download-btn {
-		background: linear-gradient(90deg, #1f64c6, #0d3b66);
+		background: linear-gradient(90deg, #9b59b6, #e1a9be);
 	}
 	.modal {
 		position: fixed;
@@ -374,7 +374,7 @@
 	}
 
 	.share-btn {
-		background: linear-gradient(90deg, #c965c6, #9b59b6);
+		background: linear-gradient(90deg, #e1a9be, #9b59b6);
 	}
 
 	.copy-url-container {
@@ -399,8 +399,8 @@
 	}
 
 	.new-create-btn {
-		background: #e6e6fa;
-		color: #353333;
+		background: #e1a9be;
+		color: #f8f6f6;
 		position: fixed;
 		bottom: 50px;
 		right: 50px;
@@ -408,6 +408,12 @@
 		padding: 15px 30px;
 		z-index: 1000; /* mi--:ブラウザを小さく開いてる時にクリックできなかったので、これを追加しました */
 	}
+
+	.new-create-btn:hover {
+		background-color: #9b59b6; /* ホバー時の色 */
+		transform: translateY(2px); /* ちょっと浮いた感じ */
+	}
+	/* 小物のスタイル */
 
 	.geta,
 	.higasa,
